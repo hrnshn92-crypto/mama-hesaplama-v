@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Yoğun Bakım Mama Hesaplama</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+        button {
+            padding: 12px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-calculate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+        .btn-calculate:hover { transform: scale(1.02); }
+        .btn-reset {
+            background: #e0e0e0;
+            color: #333;
+            width: 100%;
+        }
+        .stress-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f5f5f5;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .stress-item:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        .stress-item.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .result-box {
+            background: #f5f7fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+        }
+        .result-label {
+            color: #666;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        .result-value {
+            color: #667eea;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .hidden { display: none !important; }
+        .mama-card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .mama-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102,126,234,0.2);
+        }
+        .mama-card.selected {
+            background: #f0f0ff;
+            border-color: #667eea;
+        }
+        .mama-name { font-weight: bold; color: #333; }
+        .mama-brand { color: #666; font-size: 0.9em; }
+        .mama-specs { color: #667eea; font-weight: 600; margin-top: 8px; }
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            color: #155724;
+        }
+        @media (max-width: 1024px) {
+            .grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Yoğun Bakım Mama Hesaplama</h1>
+            <p>Hastaya uygun beslenme programı otomatik hesaplama sistemi</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>👤 Hasta Bilgileri</h2>
+                <div class="form-group">
+                    <label>Yaş (yıl)</label>
+                    <input type="number" id="yas" placeholder="65" min="1" max="120">
+                </div>
+                <div class="form-group">
+                    <label>Cinsiyet</label>
+                    <select id="cinsiyet">
+                        <option value="E">Erkek</option>
+                        <option value="K">Kadın</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Boy (cm)</label>
+                    <input type="number" id="boy" placeholder="170" min="100" max="250">
+                </div>
+                <div class="form-group">
+                    <label>Kilo (kg)</label>
+                    <input type="number" id="kilo" placeholder="75" min="20" max="200" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Tanı</label>
+                    <input type="text" id="tani" placeholder="sepsis, diyabet...">
+                </div>
+                <div class="form-group">
+                    <label>Beslenme Yolu</label>
+                    <select id="yol">
+                        <option value="Oral">🟢 Oral</option>
+                        <option value="NG">🟡 NG Tüp</option>
+                        <option value="PEG">🔴 PEG</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Beslenme Şekli</label>
+                    <select id="sekli">
+                        <option value="arasifli">⏰ Aralıklı (6 doz)</option>
+                        <option value="surekli">🔄 Sürekli (Pompa)</option>
+                    </select>
+                </div>
+                <button class="btn-calculate" onclick="hesapla()">📊 HESAPLA</button>
+                <button class="btn-reset" onclick="sifirla()">🔄 SIFIRLA</button>
+            </div>
+
+            <div class="card">
+                <h2>⚙️ Stres Faktörü & Sonuçlar</h2>
+                <div id="results1" class="hidden">
+                    <div class="result-box">
+                        <div class="result-label">BMR</div>
+                        <div class="result-value" id="bmrVal">0</div>
+                        <div style="color: #999; font-size: 0.9em;">kcal/gün</div>
+                    </div>
+                    <div class="result-box">
+                        <div class="result-label">BMI</div>
+                        <div class="result-value" id="bmiVal">0</div>
+                        <div style="color: #999; font-size: 0.9em;">kg/m²</div>
+                    </div>
+                </div>
+                <h3 style="color: #764ba2; margin-top: 20px;">Stres Faktörü Seç</h3>
+                <div id="stress1" class="stress-item" onclick="stresSecimi(1.0, this)">
+                    <strong>1.0 - Normal</strong><br>
+                    <span style="font-size: 0.9em;">Stresiz</span>
+                </div>
+                <div id="stress2" class="stress-item" onclick="stresSecimi(1.2, this)">
+                    <strong>1.2 - Hafif Stres</strong><br>
+                    <span style="font-size: 0.9em;">Post-op, hafif enfeksiyon</span>
+                </div>
+                <div id="stress3" class="stress-item" onclick="stresSecimi(1.5, this)">
+                    <strong>1.5 - Orta Stres ⭐</strong><br>
+                    <span style="font-size: 0.9em;">Sepsis, travma (En yaygın)</span>
+                </div>
+                <div id="stress4" class="stress-item" onclick="stresSecimi(1.7, this)">
+                    <strong>1.7 - Ağır Stres</strong><br>
+                    <span style="font-size: 0.9em;">Yanık, polytrauma</span>
+                </div>
+                <div id="stress5" class="stress-item" onclick="stresSecimi(2.0, this)">
+                    <strong>2.0 - Çok Ağır</strong><br>
+                    <span style="font-size: 0.9em;">Kritik durum</span>
+                </div>
+                <div id="results2" class="hidden">
+                    <div class="result-box">
+                        <div class="result-label">Günlük Kalori</div>
+                        <div class="result-value" id="kaloriVal">0</div>
+                        <div style="color: #999; font-size: 0.9em;">kcal/gün</div>
+                    </div>
+                    <div class="result-box">
+                        <div class="result-label">Günlük Protein</div>
+                        <div class="result-value" id="proteinVal">0</div>
+                        <div style="color: #999; font-size: 0.9em;">g/gün</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🥛 Mama Seçimi</h2>
+                <div id="mamaList"></div>
+                <div id="results3" class="hidden">
+                    <div class="result-box">
+                        <div class="result-label">Seçili Mama</div>
+                        <div class="result-value" id="mamaAdi">-</div>
+                    </div>
+                    <div class="result-box">
+                        <div class="result-label">Doz Başı</div>
+                        <div class="result-value" id="dozBasi">0</div>
+                        <div style="color: #999; font-size: 0.9em;">mL</div>
+                    </div>
+                    <div class="result-box">
+                        <div class="result-label">Günlük Toplam</div>
+                        <div class="result-value" id="gunlukMl">0</div>
+                        <div style="color: #999; font-size: 0.9em;">mL/gün</div>
+                    </div>
+                    <div class="success-box">
+                        ✓ Hesaplama tamamlandı!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="schemasection" style="display: none;">
+            <h2>⏰ Günlük Beslenme Şeması</h2>
+            <div class="result-box">
+                <strong>Beslenme Yolu:</strong> <span id="yolAdi">-</span><br>
+                <strong>Beslenme Şekli:</strong> <span id="sekliAdi">-</span>
+            </div>
+            <div id="schedule"></div>
+            <div class="warning-box">
+                <h4>⚠️ Tolerans Testi (İlk 5 Gün)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>1. Gün:</strong> 500 mL/gün</li>
+                    <li><strong>2. Gün:</strong> 750 mL/gün</li>
+                    <li><strong>3. Gün:</strong> 1000 mL/gün</li>
+                    <li><strong>4. Gün:</strong> 1300 mL/gün</li>
+                    <li><strong>5. Gün:</strong> Hedef doza ulaş</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>⚠️ Önemli Notlar</h2>
+            <div class="warning-box">
+                <ul style="margin-left: 20px;">
+                    <li>✓ Bu araç sadece yardımcıdır, tıbbi tavsiye DEĞİLDİR</li>
+                    <li>✓ MUTLAKA hekim/diyetisyen onayı alınmalıdır</li>
+                    <li>✓ Tolerans testi protokolü uygulanmalıdır</li>
+                    <li>✓ Günlük takip zorunludur</li>
+                    <li>✓ Sorun varsa HEMEN doktor çağırın</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedStress = null;
+        let selectedMama = null;
+
+        const mamaKatalog = [
+            { ad: 'Resource Standard (Nestlé)', kcal: 100, protein: 4 },
+            { ad: 'Resource Protein (Nestlé)', kcal: 100, protein: 6.25 },
+            { ad: 'Resource Diabetic (Nestlé)', kcal: 100, protein: 4 },
+            { ad: 'Ensure Plus (Abbott)', kcal: 150, protein: 5.5 },
+            { ad: 'Ensure High Protein (Abbott)', kcal: 150, protein: 9.4 },
+            { ad: 'Fortimel (Nutricia)', kcal: 150, protein: 5.5 },
+            { ad: 'Fortimel Protein (Nutricia)', kcal: 150, protein: 8 },
+            { ad: 'Diasip (Nutricia)', kcal: 150, protein: 6.25 }
+        ];
+
+        function calculateBMR() {
+            const yas = parseFloat(document.getElementById('yas').value);
+            const boy = parseFloat(document.getElementById('boy').value);
+            const kilo = parseFloat(document.getElementById('kilo').value);
+            const cinsiyet = document.getElementById('cinsiyet').value;
+            if (!yas || !boy || !kilo) return null;
+            let bmr;
+            if (cinsiyet === 'E') {
+                bmr = 88.36 + (13.4 * kilo) + (4.8 * boy) - (5.7 * yas);
+            } else {
+                bmr = 447.6 + (9.2 * kilo) + (3.1 * boy) - (4.3 * yas);
+            }
+            return Math.round(bmr);
+        }
+
+        function calculateBMI() {
+            const boy = parseFloat(document.getElementById('boy').value);
+            const kilo = parseFloat(document.getElementById('kilo').value);
+            if (!boy || !kilo) return null;
+            return (kilo / ((boy / 100) ** 2)).toFixed(1);
+        }
+
+        function stresSecimi(value, element) {
+            selectedStress = value;
+            document.querySelectorAll('.stress-item').forEach(e => e.classList.remove('selected'));
+            element.classList.add('selected');
+            const yas = document.getElementById('yas').value;
+            const boy = document.getElementById('boy').value;
+            const kilo = document.getElementById('kilo').value;
+            if (yas && boy && kilo) {
+                const bmr = calculateBMR();
+                const gunlukKalori = Math.round(bmr * selectedStress);
+                const gunlukProtein = Math.round(parseFloat(kilo) * 1.2);
+                document.getElementById('kaloriVal').textContent = gunlukKalori;
+                document.getElementById('proteinVal').textContent = gunlukProtein;
+                document.getElementById('results2').classList.remove('hidden');
+                showMamas();
+            }
+        }
+
+        function showMamas() {
+            const container = document.getElementById('mamaList');
+            container.innerHTML = '';
+            mamaKatalog.forEach(mama => {
+                const div = document.createElement('div');
+                div.className = 'mama-card';
+                div.innerHTML = `
+                    <div class="mama-name">${mama.ad}</div>
+                    <div class="mama-specs">⚡ ${mama.kcal} kcal  💪 ${mama.protein}g protein</div>
+                `;
+                div.onclick = function() {
+                    seçMama(mama, this);
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function seçMama(mama, element) {
+            selectedMama = mama;
+            document.querySelectorAll('.mama-card').forEach(e => e.classList.remove('selected'));
+            element.classList.add('selected');
+            if (selectedStress) {
+                hesapla();
+            }
+        }
+
+        function hesapla() {
+            const yas = document.getElementById('yas').value;
+            const boy = document.getElementById('boy').value;
+            const kilo = document.getElementById('kilo').value;
+            if (!yas || !boy || !kilo) {
+                alert('Lütfen yaş, boy ve kilo giriniz!');
+                return;
+            }
+            if (!selectedStress) {
+                alert('Lütfen stres faktörü seçiniz!');
+                return;
+            }
+            if (!selectedMama) {
+                alert('Lütfen mama seçiniz!');
+                return;
+            }
