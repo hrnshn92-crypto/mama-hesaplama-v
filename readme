@@ -1,0 +1,45 @@
+# 🏥 Yoğun Bakım Mama Hesaplama Sistemi
+
+**Hastaya uygun beslenme programı otomatik hesaplama sistemi**
+
+## 🎯 Özellikleri
+
+- ✅ BMR (Bazal Metabolik Oran) otomatik hesaplama
+- ✅ BMI (Beden Kütle İndeksi) hesaplama
+- ✅ Stres faktörü seçimi (1.0 - 2.0)
+- ✅ Otomatik kalori hesaplama
+- ✅ Protein ihtiyacı hesaplama
+- ✅ 8 farklı mama seçeneği
+- ✅ Aralıklı beslenme şeması (6 doz)
+- ✅ Sürekli infüzyon (pompa) şeması
+- ✅ Günlük beslenme programı oluşturma
+
+## 🚀 Nasıl Kullanılır
+
+1. **Hasta bilgilerini gir**: Yaş, boy, kilo, cinsiyet
+2. **HESAPLA butonuna tıkla**: BMR ve BMI hesaplanır
+3. **Stres faktörü seç**: 1.0 - 2.0 arasında
+4. **Mama seç**: 8 seçenekten birini
+5. **Beslenme şeklini seç**: Aralıklı veya Sürekli
+6. **Beslenme şeması gösterilir**
+
+## 📊 Stres Faktörü Seviyeleri
+
+| Faktör | Durum | Örnek |
+|--------|-------|-------|
+| 1.0 | Normal | Stresiz |
+| 1.2 | Hafif Stres | Post-op, hafif enfeksiyon |
+| 1.5 | Orta Stres | Sepsis, travma (En yaygın) |
+| 1.7 | Ağır Stres | Yanık, polytrauma |
+| 2.0 | Çok Ağır | Kritik durum |
+
+## 🥛 Mama Seçenekleri
+
+**Nestlé Health Science:**
+- Resource Standard (100 kcal, 4g protein)
+- Resource Protein (100 kcal, 6.25g protein)
+- Resource Diabetic (100 kcal, 4g protein)
+
+**Abbott:**
+- Ensure Plus (150 kcal, 5.5g protein)
+- Ensure High Protein (150
